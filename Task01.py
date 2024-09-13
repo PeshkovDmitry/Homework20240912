@@ -8,15 +8,46 @@ import json
 import logging
 import logging.config
 
-
 CONFIG = '''
 {
     "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)-8s - %(message)s"
+        }
+    },
     "filters": {
         "info_and_below": {
             "()" : "__main__.filter_maker",
             "level": "INFO"
         }
+    },
+    "handlers": {
+        "warnings_errors_file": {
+            "class": "logging.FileHandler",
+            "formatter": "simple",
+            "filename": "warnings_errors.log",
+            "encoding": "utf-8",
+            "mode": "w",
+            "level": "WARNING"
+        },
+        "debug_info_file": {
+            "class": "logging.FileHandler",
+            "formatter": "simple",
+            "filename": "debug_info.log",
+            "encoding": "utf-8",
+            "mode": "w",
+            "level": "DEBUG",
+            "filters": ["info_and_below"]
+        }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": [
+            "warnings_errors_file",
+            "debug_info_file"
+        ]
     }
 }
 '''
@@ -31,29 +62,11 @@ def filter_maker(level):
     return filter
 
 
-logging.config.dictConfig(json.loads(CONFIG))
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-debug_info_file_handler = logging.FileHandler(filename='debug_info.log', encoding='utf-8')
-debug_info_file_handler.setLevel(logging.DEBUG)
-debug_info_file_handler.addFilter(logging.Filter("warnings_and_below"))
-
-warnings_errors_file_handler = logging.FileHandler(filename='warnings_errors.log', encoding='utf-8')
-warnings_errors_file_handler.setLevel(logging.WARNING)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-debug_info_file_handler.setFormatter(formatter)
-warnings_errors_file_handler.setFormatter(formatter)
-
-logger.addHandler(debug_info_file_handler)
-logger.addHandler(warnings_errors_file_handler)
-
-
 if __name__ == "__main__":
-    logger.info("This is info")
-    logger.debug("This is debug")
-    logger.warning("This is warning")
-    logger.error("This is error")
-    logger.critical("This is critical")
+    logging.config.dictConfig(json.loads(CONFIG))
+    logger = logging.getLogger(__name__)
+    logger.debug('Сообщение уровня DEBUG')
+    logger.info('Сообщение уровня  INFO')
+    logger.warning('Сообщение уровня WARNING')
+    logger.error('Сообщение уровня ERROR')
+    logger.critical('Сообщение уровня CRITICAL')
