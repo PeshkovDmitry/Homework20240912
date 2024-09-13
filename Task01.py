@@ -3,7 +3,11 @@
 Напишите скрипт, который логирует разные типы сообщений в разные файлы.
 Логи уровня DEBUG и INFO должны сохраняться в debug_info.log, а логи уровня
 WARNING и выше — в warnings_errors.log.
+
+Задание сделано через JSON конфигурацию, т.к. необходимо настраивать фильтр, чтобы
+в файл debug_info.log попадали только сообщения уровня не выше INFO и DEBUG
 """
+
 import json
 import logging
 import logging.config
